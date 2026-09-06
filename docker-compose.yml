@@ -33,6 +33,9 @@ services:
     ports:
       - "9090:9090"
 
+    volumes:
+      - ./uploads:/app/uploads
+
     env_file:
       - .env
 

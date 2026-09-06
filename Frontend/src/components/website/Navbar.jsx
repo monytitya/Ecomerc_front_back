@@ -7,7 +7,6 @@ import { useCart } from '../../context/CartContext';
 const BASE = 'http://localhost:9090/api/files/';
 const img = (f) => (f ? `${BASE}${f}` : null);
 
-/* ── Isolated CartItem component with local useState for qty ── */
 const CartItem = ({ item, onDelete, onQtyChange }) => {
   const [qty, setQty] = useState(item.qty || 1);
   const [updating, setUpdating] = useState(false);

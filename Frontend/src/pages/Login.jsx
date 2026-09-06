@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const [role, setRole] = useState('CUSTOMER'); // Default to CUSTOMER for customer e-commerce site
+  const [role, setRole] = useState('CUSTOMER'); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
