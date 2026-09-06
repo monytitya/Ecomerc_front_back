@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { 
   Receipt, 
   Search, 
@@ -12,6 +11,7 @@ import {
   RefreshCw, 
   ArrowUpRight 
 } from 'lucide-react';
+import { paymentApi } from '../services/api';
 
 const Payments = () => {
     const [payments, setPayments] = useState([]);
@@ -21,10 +21,7 @@ const Payments = () => {
     const load = async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('admin_token');
-            const res = await axios.get('http://localhost:9090/api/admin/payments/all', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
+            const res = await paymentApi.getAll();
             setPayments(res.data.data || []);
         } catch (e) {
             console.error("Failed to load payments", e);
@@ -36,8 +33,8 @@ const Payments = () => {
     useEffect(() => { load(); }, []);
 
     const filtered = payments.filter(p => 
-        String(p.invoiceNo).includes(search) || 
-        (p.refNo && p.refNo.toLowerCase().includes(search.toLowerCase()))
+        String(p.orderId || '').includes(search) ||
+        String(p.transactionId || '').toLowerCase().includes(search.toLowerCase())
     );
 
     const totalAmount = filtered.reduce((sum, p) => sum + (p.amount || 0), 0);
@@ -94,33 +91,33 @@ const Payments = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50">
-                                {filtered.map(p => (
-                                    <tr key={p.paymentId} className="hover:bg-slate-50/50 transition-colors group">
+                                {filtered.map((p, index) => (
+                                    <tr key={p.id ?? p.transactionId ?? `payment-${index}`} className="hover:bg-slate-50/50 transition-colors group">
                                         <td className="px-6 py-5">
                                             <div className="flex items-center space-x-3">
                                                 <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 font-bold group-hover:bg-brand/10 group-hover:text-brand transition-colors">
-                                                    #{p.paymentId}
+                                                    #{p.id ?? '—'}
                                                 </div>
-                                                <span className="font-bold text-slate-800">TXN-{p.code}</span>
+                                                <span className="font-bold text-slate-800">{p.transactionId || '—'}</span>
                                             </div>
                                         </td>
                                         <td className="px-6 py-5">
                                             <div className="flex items-center space-x-2 text-brand font-black">
                                                 <Receipt className="w-4 h-4" />
-                                                <span>{p.invoiceNo}</span>
+                                                <span>Order #{p.orderId ?? '—'}</span>
                                             </div>
                                         </td>
                                         <td className="px-6 py-5 font-black text-slate-900">${p.amount?.toLocaleString()}</td>
                                         <td className="px-6 py-5">
                                             <div className="flex flex-col">
-                                                <span className="font-bold text-slate-800">{p.paymentDate?.split(' ')[0]}</span>
-                                                <span className="text-[10px] text-slate-400 font-bold">{p.paymentDate?.split(' ')[1] || '12:00 PM'}</span>
+                                                <span className="font-bold text-slate-800">{p.createdAt ? new Date(p.createdAt).toLocaleDateString() : '—'}</span>
+                                                <span className="text-[10px] text-slate-400 font-bold">{p.createdAt ? new Date(p.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—'}</span>
                                             </div>
                                         </td>
                                         <td className="px-6 py-5">
                                             <span className="inline-flex items-center px-3 py-1.5 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold ring-1 ring-inset ring-slate-200">
                                                 <CreditCard className="w-3.5 h-3.5 mr-2" />
-                                                {p.paymentMode}
+                                                {p.currency || 'KHQR'}
                                             </span>
                                         </td>
                                         <td className="px-6 py-5">
@@ -134,7 +131,7 @@ const Payments = () => {
                                                 </span>
                                             )}
                                         </td>
-                                        <td className="px-6 py-5 font-mono text-xs font-bold text-slate-400">{p.refNo || '—'}</td>
+                                        <td className="px-6 py-5 font-mono text-xs font-bold text-slate-400">{p.transactionId || '—'}</td>
                                     </tr>
                                 ))}
                                 {filtered.length === 0 && (

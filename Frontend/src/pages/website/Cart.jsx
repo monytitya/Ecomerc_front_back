@@ -21,7 +21,7 @@ const getInitialContact = () => {
 };
 
 const Cart = () => {
-  const { cartItems: items, updateQty, removeFromCart, clearCart, refreshCart } = useCart();
+  const { cartItems: items, updateQty, removeFromCart, refreshCart } = useCart();
   const [loading, setLoading] = useState(false);
   const [coupon,  setCoupon]  = useState('');
   const [discount, setDiscount] = useState(0);
@@ -49,6 +49,10 @@ const Cart = () => {
 
   const handleCheckout = async () => {
     if (items.length === 0) return;
+    if (items.length > 1) {
+      setAmountError('Please checkout one product at a time. Multi-product orders are not supported yet.');
+      return;
+    }
     const name = contact.name.trim();
     const phone = contact.phone.trim();
     const address = contact.address.trim();
@@ -84,7 +88,6 @@ const Cart = () => {
       const res = await orderApi.placeOrder(payload);
       if (res.data?.success) {
         const invoiceNo = res.data.data.invoiceNo;
-        clearCart(); // Reset cart badge to 0
         navigate(`/checkout/${invoiceNo}`);
       } else {
         alert('Failed to place order: ' + (res.data?.message || 'Unknown error'));

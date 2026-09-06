@@ -29,6 +29,7 @@ const Header = () => {
 
   const displayName = user.name || user.adminName || 'Admin User';
   const profileImg = user.image || user.adminImage;
+  const hasProfileImage = profileImg && profileImg !== 'admin-default.png';
 
   const NOTIFICATIONS = [
     { id: 1, title: 'New Order #352', time: '5m ago', icon: CheckCircle, color: 'text-emerald-500' },
@@ -110,8 +111,8 @@ const Header = () => {
           </div>
           <div className="relative">
             <div className="w-11 h-11 rounded-2xl bg-slate-900 border border-white/10 overflow-hidden ring-4 ring-transparent group-hover:ring-brand/20 group-hover:border-brand/40 transition-all duration-300">
-              {profileImg
-                ? <img src={fileUrl(profileImg)} alt="Profile" className="w-full h-full object-cover" />
+              {hasProfileImage
+                ? <img src={fileUrl(profileImg)} alt="Profile" className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />
                 : <div className="w-full h-full flex items-center justify-center text-brand font-black bg-brand/5 uppercase text-lg">{displayName[0]}</div>
               }
             </div>

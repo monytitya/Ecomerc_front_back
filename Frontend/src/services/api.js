@@ -10,6 +10,10 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
+    if (config.url?.includes('/auth/')) {
+      delete config.headers.Authorization;
+      return config;
+    }
     const token = localStorage.getItem('admin_token') || localStorage.getItem('customer_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -160,6 +164,7 @@ export const paymentApi = {
   create: (data) => api.post('/payment/create', data),
   getStatus: (transactionId) => api.get(`/payment/status/${transactionId}`),
   webhook: (data) => api.post('/payment/webhook', data),
+  getAll: () => api.get('/admin/payments/all'),
 };
 
 export const adminApi = {
@@ -175,7 +180,7 @@ export const contactApi = {
   send: (data) => api.post('/contact/send', data),
 };
 
-export const fileUrl = (filename) => `${import.meta.env.VITE_API_URL || 'http://localhost:9090/api'}/files/${filename}`;
+export const fileUrl = (filename) => `${import.meta.env.VITE_API_URL || '/api'}/files/${filename}`;
 
 export default api;
 

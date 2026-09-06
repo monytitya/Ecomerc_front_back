@@ -55,6 +55,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/customers", "/api/customers/**").permitAll()
                         .requestMatchers("/api/coupons", "/api/coupons/**").permitAll()
                         .requestMatchers("/api/payments", "/api/payments/**").permitAll()
+                        .requestMatchers("/api/payment/webhook").permitAll()
 
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
@@ -91,7 +92,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         // allowedOriginPatterns supports allowCredentials=true with a specific origin
-        config.setAllowedOriginPatterns(List.of(frontendUrl));
+        config.setAllowedOriginPatterns(List.of(frontendUrl, "http://localhost:5173", "http://localhost:5174"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

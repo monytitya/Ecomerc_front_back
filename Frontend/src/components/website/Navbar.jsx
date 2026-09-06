@@ -219,7 +219,7 @@ const Navbar = () => {
                           const id = cat.catId || cat.categoryId;
                           const name = cat.catTitle || cat.name;
                           return (
-                            <Link key={id} to={`/shop?category=${id}`} className="block px-3 py-2 text-sm font-medium text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl">
+                            <Link key={`${id}-${name}`} to={`/shop?category=${id}`} className="block px-3 py-2 text-sm font-medium text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl">
                               {name}
                             </Link>
                           );
@@ -374,9 +374,9 @@ const Navbar = () => {
                 </div>
               ) : (
                 <div className="space-y-6">
-                  {cartItems.map((item) => (
+                  {cartItems.map((item, index) => (
                     <CartItem
-                      key={item.pId ?? item.productId ?? item.id}
+                      key={item.pId ?? item.productId ?? item.id ?? `${item.productTitle || 'cart-item'}-${index}`}
                       item={item}
                       onDelete={handleRemoveItem}
                       onQtyChange={handleQtyChange}

@@ -19,6 +19,7 @@ const Checkout = () => {
   const [errorMsg, setErrorMsg] = useState(null);
   const [pollCount, setPollCount] = useState(0);
   const maxPollAttempts = 120; // 10 minutes (120 * 5 seconds)
+  const normalizePaymentStatus = (value) => String(value || 'PENDING').toUpperCase();
 
   const initPayment = async () => {
     try {
@@ -62,7 +63,7 @@ const Checkout = () => {
       if (res.data?.success) {
         const pData = res.data.data;
         setTransactionId(pData.transactionId);
-        setStatus(pData.status || 'PENDING');
+        setStatus(normalizePaymentStatus(pData.status));
         setQr(pData.qrString);
         setQrImage(pData.qrImage); // Base64 from ZXing
 
@@ -82,7 +83,7 @@ const Checkout = () => {
     if (!transactionId || status !== 'PENDING') return;
     try {
       const res = await paymentApi.getStatus(transactionId);
-      const paymentStatus = res.data.data?.status;
+      const paymentStatus = normalizePaymentStatus(res.data.data?.status);
       if (paymentStatus === 'PAID' || paymentStatus === 'FAILED') {
         setStatus(paymentStatus);
         setPollCount(0);
@@ -112,6 +113,7 @@ const Checkout = () => {
   useEffect(() => {
     let timer;
     if (transactionId && status === 'PENDING' && pollCount < maxPollAttempts) {
+      pollStatus();
       timer = setInterval(pollStatus, 5000); // Polling every 5 seconds
     }
     return () => clearInterval(timer);
@@ -119,6 +121,7 @@ const Checkout = () => {
 
   useEffect(() => {
     if (status !== 'PAID') return;
+    window.alert(`Payment successful!\nInvoice #${invoiceNo} has been paid.`);
     clearCart();
     const redirectTimer = setTimeout(() => navigate(`/order-success/${invoiceNo}`), 1200);
     return () => clearTimeout(redirectTimer);

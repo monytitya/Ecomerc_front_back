@@ -1,5 +1,32 @@
-{"properties": [{
-  "name": "telegram.chat.id",
-  "type": "java.lang.String",
-  "description": "A description for 'telegram.chat.id'"
-}]}
+{"properties": [
+  {
+    "name": "telegram.chat.id",
+    "type": "java.lang.String",
+    "description": "A description for 'telegram.chat.id'"
+  },
+  {
+    "name": "file.upload-dir",
+    "type": "java.lang.String",
+    "description": "A description for 'file.upload-dir'"
+  },
+  {
+    "name": "jwt.secret",
+    "type": "java.lang.String",
+    "description": "A description for 'jwt.secret'"
+  },
+  {
+    "name": "telegram.bot.token",
+    "type": "java.lang.String",
+    "description": "A description for 'telegram.bot.token'"
+  },
+  {
+    "name": "payment.khqr.merchant-name",
+    "type": "java.lang.String",
+    "description": "A description for 'payment.khqr.merchant-name'"
+  },
+  {
+    "name": "khqr.api.token",
+    "type": "java.lang.String",
+    "description": "A description for 'khqr.api.token'"
+  }
+]}

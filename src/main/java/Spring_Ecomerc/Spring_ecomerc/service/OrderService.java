@@ -61,8 +61,6 @@ public class OrderService {
                 .build();
         pendingOrderRepository.save(pendingOrder);
 
-        cartRepository.deleteByIpAdd(ipAddress);
-
         // New Idea: Instant Telegram Alert
         try {
             String customerName = customerId == null

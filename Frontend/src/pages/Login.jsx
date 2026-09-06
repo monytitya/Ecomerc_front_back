@@ -274,7 +274,7 @@ const Login = () => {
               type="button"
               onClick={() => {
                 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || 'dummy-google-client-id.apps.googleusercontent.com';
-                const redirectUri = encodeURIComponent(`${window.location.origin}/oauth2/callback`);
+                const redirectUri = encodeURIComponent(import.meta.env.VITE_GOOGLE_REDIRECT_URI || `${window.location.origin}/oauth2/callback`);
                 const scope = encodeURIComponent('email profile');
                 window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&prompt=consent`;
               }}

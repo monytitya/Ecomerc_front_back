@@ -4,8 +4,10 @@ import { Search, SlidersHorizontal, Star, ShoppingBag, X, ChevronDown, Heart, Lo
 import { productApi, catalogApi, wishlistApi, fileUrl } from '../../services/api';
 import { useCart } from '../../context/CartContext';
 
-const BASE = 'http://localhost:9090/api/files/';
-const img  = (f) => (f ? `${BASE}${f}` : null);
+const img = (filename) => {
+  if (!filename) return null;
+  return filename.startsWith('http') ? filename : fileUrl(filename);
+};
 
 const SORT_OPTIONS = [
   { label: 'Newest Arrivals', value: 'productId' },
@@ -306,7 +308,23 @@ const Shop = () => {
                   >
                     <div className="relative aspect-square rounded-2xl bg-slate-50 overflow-hidden mb-4">
                       {image ? (
-                        <img src={image} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" onError={e=>{e.target.style.display='none';}} />
+                        <>
+                          <img
+                            src={image}
+                            alt={product.productTitle || product.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                            onError={e => {
+                              e.currentTarget.style.display = 'none';
+                              e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                            }}
+                          />
+                          <div className="hidden w-full h-full flex-col items-center justify-center gap-3 text-slate-300">
+                            <ShoppingBag className="w-12 h-12" />
+                            <span className="px-6 text-center text-xs font-bold uppercase tracking-wide text-slate-400">
+                              {product.productTitle || product.title || 'Product image unavailable'}
+                            </span>
+                          </div>
+                        </>
                       ) : (
                         <div className="w-full h-full flex items-center justify-center"><ShoppingBag className="w-12 h-12 text-slate-200" /></div>
                       )}

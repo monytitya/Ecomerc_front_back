@@ -3,6 +3,7 @@ package Spring_Ecomerc.Spring_ecomerc.service;
 import Spring_Ecomerc.Spring_ecomerc.dto.BakongWebhookRequest;
 import Spring_Ecomerc.Spring_ecomerc.dto.PaymentCreateRequest;
 import Spring_Ecomerc.Spring_ecomerc.dto.PaymentResponse;
+import Spring_Ecomerc.Spring_ecomerc.entity.CustomerOrder;
 import Spring_Ecomerc.Spring_ecomerc.entity.Payment;
 import Spring_Ecomerc.Spring_ecomerc.entity.PaymentStatus;
 import Spring_Ecomerc.Spring_ecomerc.repository.CustomerOrderRepository;
@@ -67,8 +68,15 @@ public class PaymentServiceImpl implements PaymentService {
         if (request.getOrderId() == null || request.getOrderId() <= 0) {
             throw new RuntimeException("Invalid order ID. Order ID must be a positive number.");
         }
+
+        CustomerOrder order = customerOrderRepository.findById(request.getOrderId().intValue())
+                .orElseThrow(() -> new RuntimeException("Order not found: " + request.getOrderId()));
+
+        if (order.getDueAmount() == null || request.getAmount() == null
+                || Math.abs(order.getDueAmount() - request.getAmount()) > 0.001) {
+            throw new RuntimeException("Payment amount does not match order total for order #" + request.getOrderId());
+        }
         
-        // Validate amount - must be a positive number and meet minimum requirement
         if (request.getAmount() == null || request.getAmount() <= 0) {
             throw new RuntimeException(
                 "Invalid payment amount: " + request.getAmount() + 
@@ -77,7 +85,6 @@ public class PaymentServiceImpl implements PaymentService {
             );
         }
         
-        // Validate minimum payment amount (0.01 USD / 100 Riel)
         String paymentCurrency = request.getCurrency() == null ? "USD" : request.getCurrency().trim().toUpperCase(Locale.ROOT);
         if (!validateMinimumPaymentAmount(request.getAmount(), paymentCurrency)) {
             String minMessage = "KHR".equals(paymentCurrency)
@@ -177,6 +184,11 @@ public class PaymentServiceImpl implements PaymentService {
                     System.err.println("Transaction not found: " + request.getTransactionId());
                     return new RuntimeException("Transaction not found: " + request.getTransactionId());
                 });
+
+            if (request.getAmount() != null && payment.getAmount() != null
+                && Math.abs(payment.getAmount() - request.getAmount()) > 0.001) {
+                throw new RuntimeException("Webhook amount does not match payment amount");
+            }
 
         markAsPaid(payment, "Bakong KHQR");
 

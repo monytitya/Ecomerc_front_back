@@ -19,7 +19,7 @@ const OAuth2Callback = () => {
       }
 
       try {
-        const redirectUri = `${window.location.origin}/oauth2/callback`;
+        const redirectUri = import.meta.env.VITE_GOOGLE_REDIRECT_URI || `${window.location.origin}/oauth2/callback`;
         const response = await authApi.loginOAuth2Code({ code, redirectUri });
 
         const authData = response.data?.data || response.data;

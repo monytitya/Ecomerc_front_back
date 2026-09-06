@@ -1,8 +1,4 @@
-/**
- * Application Constants
- */
 
-// Minimum payment amounts
 export const PAYMENT_CONSTANTS = {
   MIN_AMOUNT_USD: 0.01,
   MIN_AMOUNT_KHR: 100,
