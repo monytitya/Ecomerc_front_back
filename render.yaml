@@ -38,21 +38,3 @@ services:
         sync: false
       - key: TELEGRAM_CHAT_ID
         sync: false
-
-  - type: web
-    name: ecomerc-frontend
-    runtime: static
-    rootDir: Frontend
-    buildCommand: npm ci && npm run build
-    staticPublishPath: dist
-    envVars:
-      - key: VITE_API_URL
-        sync: false
-      - key: VITE_GOOGLE_CLIENT_ID
-        sync: false
-      - key: VITE_GOOGLE_REDIRECT_URI
-        sync: false
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
