@@ -62,6 +62,8 @@ The application currently uses Hibernate `ddl-auto=update` to create/update its 
    `KHQR_MERCHANT_NAME` and `KHQR_CITY` have Blueprint defaults. Do not commit production secrets or put secrets in any `VITE_*` variable; Vite values are included in browser-delivered files.
 4. Deploy the service. Its health check is `/api/products`. Copy the public service URL, for example `https://your-api.onrender.com`.
 
+The production profile requires `DB_URL`, `DB_USER`, `DB_PASSWORD`, `JWT_SECRET`, and `FRONTEND_URL` to be configured on Render; it does not fall back to local database or signing-secret values. The Blueprint generates `JWT_SECRET`. Use the intended Vercel origin for `FRONTEND_URL`, then update it and redeploy the backend after the frontend is deployed if the final origin differs. Local runs default to the `dev` profile; do not copy local `.env` credentials into Render or Vercel.
+
 The Spring Boot production profile uses Render's `PORT` environment variable when provided. The Docker image's port `9090` is the local/default port.
 
 ### 3. Deploy the frontend to Vercel

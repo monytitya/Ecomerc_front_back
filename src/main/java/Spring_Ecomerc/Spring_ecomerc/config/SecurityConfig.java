@@ -29,7 +29,7 @@ public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
 
-    @Value("${FRONTEND_URL:http://localhost:5173}")
+    @Value("${app.frontend-url}")
     private String frontendUrl;
 
     @Bean
@@ -92,7 +92,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         // allowedOriginPatterns supports allowCredentials=true with a specific origin
-        config.setAllowedOriginPatterns(List.of(frontendUrl, "http://localhost:5173", "http://localhost:5174"));
+        config.setAllowedOriginPatterns(List.of(frontendUrl));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
