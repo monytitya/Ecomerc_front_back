@@ -40,7 +40,7 @@ services:
 
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
-      DB_URL: ${DB_URL:-jdbc:postgresql://db:5432/ecomerc_web}
+      DB_URL: "jdbc:postgresql://db:5432/${POSTGRES_DB:-ecomerc_web}?sslmode=disable"
       DB_USER: ${DB_USER:-postgres}
       DB_PASSWORD: ${DB_PASSWORD:-postgres}
       JWT_SECRET: ${JWT_SECRET:-404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
