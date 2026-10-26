@@ -66,6 +66,8 @@ The production profile requires `DB_URL`, `DB_USER`, `DB_PASSWORD`, `JWT_SECRET`
 
 **Render build troubleshooting:** If the build log says `./mvnw: No such file or directory` or detects Elixir, the web service is using a native runtime/build command instead of this repository's Docker configuration. The repository does not include a Maven wrapper; the [`Dockerfile`](./Dockerfile) uses Maven directly in its Java build image. Create or replace the service from the Blueprint above, or create a Docker web service manually with the root Dockerfile. Keep the existing service until the replacement is healthy, then update integrations to the replacement URL.
 
+**Database connection troubleshooting:** If Render logs show an attempt to connect to `localhost:5432`, set Render's `DB_URL` to the Supabase session-pooler JDBC URL from step 1 (including `?sslmode=require`), and set its matching `DB_USER` and rotated `DB_PASSWORD`. `localhost` inside the Render container is the container itself, not the Supabase database. The Docker image defaults to the `prod` profile so missing production database settings fail rather than falling back to a local database. Docker Compose explicitly uses `dev` for local development.
+
 The Spring Boot production profile uses Render's `PORT` environment variable when provided. The Docker image's port `9090` is the local/default port.
 
 ### 3. Deploy the frontend to Vercel
