@@ -83,7 +83,7 @@ The Spring Boot production profile uses Render's `PORT` environment variable whe
 
 5. Deploy. The [`Frontend/vercel.json`](./Frontend/vercel.json) rewrite sends SPA routes (including `/oauth2/callback`) to the app entry point.
 
-Vite environment variables are read at build time. Redeploy the frontend after changing them. Set the final Vercel URL as `FRONTEND_URL` in Render and redeploy the backend so its CORS allow-list matches the frontend origin.
+Set `VITE_API_URL` to the full HTTPS Render API URL ending in `/api` (for example, `https://your-api.onrender.com/api`). The Vercel build stops with a clear error if this required value is missing or invalid; a relative `/api` URL would send requests to Vercel instead of Render. Vite environment variables are read at build time. Redeploy the frontend after changing them. Set the final Vercel URL as `FRONTEND_URL` in Render and redeploy the backend so its CORS allow-list matches the frontend origin.
 
 ### 4. Configure Google OAuth (optional)
 
