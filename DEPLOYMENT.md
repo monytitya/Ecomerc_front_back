@@ -12,6 +12,9 @@ Do not commit `.env` files or enter database credentials in Vercel. The root `.d
 
 1. Push the updated repository to GitHub.
 2. In Render, create a Blueprint from the repository. Render reads [`render.yaml`](./render.yaml) and creates the Docker-based Spring Boot web service.
+   - The Blueprint selects the Docker runtime and root `Dockerfile`. If creating a web service manually, set **Language** to **Docker**, **Dockerfile Path** to `./Dockerfile`, and the build context to the repository root.
+   - Do not set a native build command such as `./mvnw clean package`. This repository has no Maven wrapper; the Dockerfile installs/runs Maven in its Java build image.
+   - If logs show `./mvnw: No such file or directory` or detect Elixir, the existing service is configured with the wrong runtime/build command. Create a replacement from the Blueprint or as a Docker web service. Keep the old service until the replacement deploys and passes its health check.
 3. Set the required environment values in the Render service:
    - `DB_URL`: Supabase JDBC URL using the connection details shown by Supabase. For a long-running Render service, use the Supabase session pooler and include `sslmode=require`.
    - `DB_USER` and `DB_PASSWORD`: pooler username and the newly rotated database password.

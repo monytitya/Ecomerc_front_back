@@ -41,7 +41,7 @@ The application currently uses Hibernate `ddl-auto=update` to create/update its 
 ### 2. Deploy the backend to Render
 
 1. Push the repository to GitHub.
-2. In Render, choose **New > Blueprint** and select this repository. Render reads [`render.yaml`](./render.yaml), which defines the backend service.
+2. In Render, choose **New > Blueprint** and select this repository. Render reads [`render.yaml`](./render.yaml), which defines the backend service with the Docker runtime and root [`Dockerfile`](./Dockerfile). If creating a web service manually instead, set **Language** to **Docker**, **Dockerfile Path** to `./Dockerfile`, and the build context to the repository root. Do not configure `./mvnw` as a Render build command; Maven runs inside the Docker build.
 3. Set the backend's environment variables in Render:
 
    | Variable | Value |
@@ -64,6 +64,8 @@ The application currently uses Hibernate `ddl-auto=update` to create/update its 
 
 The production profile requires `DB_URL`, `DB_USER`, `DB_PASSWORD`, `JWT_SECRET`, and `FRONTEND_URL` to be configured on Render; it does not fall back to local database or signing-secret values. The Blueprint generates `JWT_SECRET`. Use the intended Vercel origin for `FRONTEND_URL`, then update it and redeploy the backend after the frontend is deployed if the final origin differs. Local runs default to the `dev` profile; do not copy local `.env` credentials into Render or Vercel.
 
+**Render build troubleshooting:** If the build log says `./mvnw: No such file or directory` or detects Elixir, the web service is using a native runtime/build command instead of this repository's Docker configuration. The repository does not include a Maven wrapper; the [`Dockerfile`](./Dockerfile) uses Maven directly in its Java build image. Create or replace the service from the Blueprint above, or create a Docker web service manually with the root Dockerfile. Keep the existing service until the replacement is healthy, then update integrations to the replacement URL.
+
 The Spring Boot production profile uses Render's `PORT` environment variable when provided. The Docker image's port `9090` is the local/default port.
 
 ### 3. Deploy the frontend to Vercel
@@ -83,7 +85,7 @@ The Spring Boot production profile uses Render's `PORT` environment variable whe
 
 5. Deploy. The [`Frontend/vercel.json`](./Frontend/vercel.json) rewrite sends SPA routes (including `/oauth2/callback`) to the app entry point.
 
-Set `VITE_API_URL` to the full HTTPS Render API URL ending in `/api` (for example, `https://your-api.onrender.com/api`). The Vercel build stops with a clear error if this required value is missing or invalid; a relative `/api` URL would send requests to Vercel instead of Render. Vite environment variables are read at build time. Redeploy the frontend after changing them. Set the final Vercel URL as `FRONTEND_URL` in Render and redeploy the backend so its CORS allow-list matches the frontend origin.
+The Vercel build requires `VITE_API_URL` to be the full HTTPS Render API URL ending in `/api`; it stops with a clear error if the value is missing or invalid. A relative `/api` URL would send requests to Vercel instead of Render. Vite variables are read at build time, so redeploy the frontend after changing them. Set the final Vercel URL as `FRONTEND_URL` in Render and redeploy the backend so its CORS allow-list matches the frontend origin.
 
 ### 4. Configure Google OAuth (optional)
 
