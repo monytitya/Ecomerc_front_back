@@ -28,6 +28,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private static final String VERCEL_PREVIEW_ORIGIN_PATTERN =
+            "https://ecomerc-front-back-*-maotityamony23-7469s-projects.vercel.app";
+
     private final JwtAuthFilter jwtAuthFilter;
 
     @Value("${app.frontend-url}")
@@ -99,9 +102,11 @@ public class SecurityConfig {
                 .map(String::trim)
                 .filter(origin -> !origin.isEmpty())
                 .toList());
-        config.setAllowedOriginPatterns(Arrays.stream(frontendOriginPatterns.split(","))
+        config.setAllowedOriginPatterns(Arrays.stream(
+                        (VERCEL_PREVIEW_ORIGIN_PATTERN + "," + frontendOriginPatterns).split(","))
                 .map(String::trim)
                 .filter(pattern -> !pattern.isEmpty())
+                .distinct()
                 .toList());
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
