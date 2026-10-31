@@ -18,11 +18,11 @@ Do not commit `.env` files or enter database credentials in Vercel. The root `.d
 3. Set the required environment values in the Render service:
    - `DB_URL`: Supabase JDBC URL using the connection details shown by Supabase. For a long-running Render service, use the Supabase session pooler and include `sslmode=require`.
    - `DB_USER` and `DB_PASSWORD`: pooler username and the newly rotated database password.
-   - `FRONTEND_URL`: the deployed Vercel origin, with no trailing slash.
+   - `FRONTEND_URL`: the deployed Vercel origin, with no trailing slash. Multiple exact origins can be comma-separated, for example `https://your-shop.vercel.app,https://your-preview.vercel.app`. Avoid wildcard origins; use the stable production domain where possible.
    - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `GOOGLE_REDIRECT_URI` if Google sign-in is enabled.
    - Payment and Telegram values only for integrations you use.
 4. Keep Render's generated `JWT_SECRET`; do not replace it with a development value. The Blueprint sets the production profile and the service health check.
-5. Wait for the Render deploy to report healthy, then open `https://<your-render-service>/api/products`. The API should return a products response.
+5. Wait for the Render deploy to report healthy, then open `https://<your-render-service>/api/products`. The API should return a products response. The admin login endpoint only accepts `POST`; opening `/api/auth/admin/login` directly in a browser sends `GET` and is expected to return “Request method 'GET' is not supported.”
 6. Set the Vercel `VITE_API_URL` to `https://<your-render-service>/api`, deploy the frontend, and then set that Vercel site origin as Render's `FRONTEND_URL`. Redeploy the backend after changing CORS or OAuth settings.
 
 Use the full variable list and frontend, OAuth, and end-to-end verification steps in the root [README](./README.md#recommended-deployment). Render's local disk is ephemeral: product/customer uploads need durable object storage before relying on them in production.

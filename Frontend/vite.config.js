@@ -2,11 +2,11 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
-if (process.env.VERCEL === '1') {
+if (process.env.VERCEL === '1' || process.env.CF_PAGES === '1') {
   const apiUrl = process.env.VITE_API_URL
 
   if (!apiUrl) {
-    throw new Error('VITE_API_URL must be set in Vercel to the deployed Render API URL ending in /api.')
+    throw new Error('VITE_API_URL must be set to the deployed HTTPS API URL ending in /api.')
   }
 
   let parsedApiUrl

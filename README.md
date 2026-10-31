@@ -14,6 +14,8 @@ Deploy each part to the service that best fits it:
 
 The browser talks to the Render API. Only the backend connects to Supabase; database credentials must never be placed in frontend environment variables.
 
+To use Cloudflare Pages instead of Vercel for the frontend, follow the [Cloudflare deployment guide](./CLOUDFLARE_DEPLOYMENT.md). The Spring Boot API remains on Render and the database remains on Supabase; Cloudflare Workers are not required.
+
 ## Deployment order
 
 Deploy in this order so each service has the URL or connection details required by the next:
