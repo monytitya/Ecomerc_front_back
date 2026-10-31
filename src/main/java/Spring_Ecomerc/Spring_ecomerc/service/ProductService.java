@@ -1,6 +1,9 @@
 package Spring_Ecomerc.Spring_ecomerc.service;
 
 import Spring_Ecomerc.Spring_ecomerc.entity.Product;
+import Spring_Ecomerc.Spring_ecomerc.entity.Category;
+import Spring_Ecomerc.Spring_ecomerc.entity.Manufacturer;
+import Spring_Ecomerc.Spring_ecomerc.entity.ProductCategory;
 import Spring_Ecomerc.Spring_ecomerc.model.ProductModel;
 import Spring_Ecomerc.Spring_ecomerc.repository.BundleProductRelationRepository;
 import Spring_Ecomerc.Spring_ecomerc.repository.CartRepository;
@@ -19,7 +22,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,7 +48,7 @@ public class ProductService {
     public Page<ProductModel> getAllProducts(int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
         Page<Product> productPage = productRepository.findAll(pageable);
-        return productPage.map(this::mapToModel);
+        return new PageImpl<>(mapToModels(productPage.getContent()), pageable, productPage.getTotalElements());
     }
 
     public ProductModel getProductById(Integer id) {
@@ -51,27 +58,27 @@ public class ProductService {
     }
 
     public List<ProductModel> getProductsByCategory(Integer catId) {
-        return productRepository.findByCatId(catId).stream().map(this::mapToModel).collect(Collectors.toList());
+        return mapToModels(productRepository.findByCatId(catId));
     }
 
     public List<ProductModel> getProductsBySubCategory(Integer pCatId) {
-        return productRepository.findByPCatId(pCatId).stream().map(this::mapToModel).collect(Collectors.toList());
+        return mapToModels(productRepository.findByPCatId(pCatId));
     }
 
     public List<ProductModel> getProductsByManufacturer(Integer manufacturerId) {
-        return productRepository.findByManufacturerId(manufacturerId).stream().map(this::mapToModel).collect(Collectors.toList());
+        return mapToModels(productRepository.findByManufacturerId(manufacturerId));
     }
 
     public List<ProductModel> getFeaturedProducts() {
-        return productRepository.findByProductLabel("Featured").stream().map(this::mapToModel).collect(Collectors.toList());
+        return mapToModels(productRepository.findByProductLabel("Featured"));
     }
 
     public List<ProductModel> getProductsByLabel(String label) {
-        return productRepository.findByProductLabel(label).stream().map(this::mapToModel).collect(Collectors.toList());
+        return mapToModels(productRepository.findByProductLabel(label));
     }
 
     public List<ProductModel> searchProducts(String keyword) {
-        return productRepository.findByProductTitleContainingIgnoreCase(keyword).stream().map(this::mapToModel).collect(Collectors.toList());
+        return mapToModels(productRepository.findByProductTitleContainingIgnoreCase(keyword));
     }
 
     public ProductModel createProduct(Product product, MultipartFile img) throws IOException {
@@ -134,6 +141,38 @@ public class ProductService {
     }
 
     private ProductModel mapToModel(Product product) {
+        return mapToModels(List.of(product)).get(0);
+    }
+
+    private List<ProductModel> mapToModels(List<Product> products) {
+        Set<Integer> categoryIds = products.stream().map(Product::getCatId)
+                .filter(java.util.Objects::nonNull).collect(Collectors.toSet());
+        Set<Integer> productCategoryIds = products.stream().map(Product::getPCatId)
+                .filter(java.util.Objects::nonNull).collect(Collectors.toSet());
+        Set<Integer> manufacturerIds = products.stream().map(Product::getManufacturerId)
+                .filter(java.util.Objects::nonNull).collect(Collectors.toSet());
+
+        Map<Integer, Category> categories = new HashMap<>();
+        categoryRepository.findAllById(categoryIds).forEach(category -> categories.put(category.getCatId(), category));
+        Map<Integer, ProductCategory> productCategories = new HashMap<>();
+        productCategoryRepository.findAllById(productCategoryIds)
+                .forEach(category -> productCategories.put(category.getPCatId(), category));
+        Map<Integer, Manufacturer> manufacturers = new HashMap<>();
+        manufacturerRepository.findAllById(manufacturerIds)
+                .forEach(manufacturer -> manufacturers.put(manufacturer.getManufacturerId(), manufacturer));
+
+        List<ProductModel> models = new ArrayList<>(products.size());
+        for (Product product : products) {
+            models.add(mapToModel(product, categories, productCategories, manufacturers));
+        }
+        return models;
+    }
+
+    private ProductModel mapToModel(
+            Product product,
+            Map<Integer, Category> categories,
+            Map<Integer, ProductCategory> productCategories,
+            Map<Integer, Manufacturer> manufacturers) {
         ProductModel model = new ProductModel();
         model.setProductId(product.getProductId());
         model.setProductTitle(product.getProductTitle());
@@ -150,19 +189,16 @@ public class ProductService {
         model.setStatus(product.getStatus());
         
         model.setCatId(product.getCatId());
-        if (product.getCatId() != null) {
-            categoryRepository.findById(product.getCatId()).ifPresent(c -> model.setCatTitle(c.getCatTitle()));
-        }
+        var category = categories.get(product.getCatId());
+        if (category != null) model.setCatTitle(category.getCatTitle());
         
         model.setPCatId(product.getPCatId());
-        if (product.getPCatId() != null) {
-            productCategoryRepository.findById(product.getPCatId()).ifPresent(pc -> model.setPCatTitle(pc.getPCatTitle()));
-        }
+        var productCategory = productCategories.get(product.getPCatId());
+        if (productCategory != null) model.setPCatTitle(productCategory.getPCatTitle());
         
         model.setManufacturerId(product.getManufacturerId());
-        if (product.getManufacturerId() != null) {
-            manufacturerRepository.findById(product.getManufacturerId()).ifPresent(m -> model.setManufacturerTitle(m.getManufacturerTitle()));
-        }
+        var manufacturer = manufacturers.get(product.getManufacturerId());
+        if (manufacturer != null) model.setManufacturerTitle(manufacturer.getManufacturerTitle());
         
         model.setDate(product.getDate());
         
@@ -203,4 +239,3 @@ public class ProductService {
         entityManager.flush();
     }
 }
-

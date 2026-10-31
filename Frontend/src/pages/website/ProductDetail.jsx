@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
-  ShoppingBag, Heart, Star, Truck, Shield, ArrowLeft, Minus, Plus,
+  ShoppingBag, Heart, Truck, Shield, ArrowLeft, Minus, Plus,
   Check, Share2, Loader2, ShoppingCart
 } from 'lucide-react';
-import { productApi, wishlistApi } from '../../services/api';
+import { productApi, wishlistApi, fileUrl } from '../../services/api';
 import { useCart } from '../../context/CartContext';
 
-const BASE = 'http://localhost:9090/api/files/';
-const img  = (f) => (f ? `${BASE}${f}` : null);
+const img = fileUrl;
 
 const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
@@ -159,12 +158,7 @@ const ProductDetail = () => {
 
             {/* Rating */}
             <div className="flex items-center gap-3 mb-6">
-              <div className="flex gap-1">
-                {[1,2,3,4,5].map(s => (
-                  <Star key={s} className={`w-4 h-4 ${s <= 4 ? 'fill-amber-400 text-amber-400' : 'text-slate-200'}`} />
-                ))}
-              </div>
-              <span className="text-sm text-slate-500">4.0 · 24 reviews</span>
+              <span className="text-sm text-slate-500">No reviews yet</span>
             </div>
 
             {/* Price */}
@@ -309,28 +303,8 @@ const ProductDetail = () => {
             </div>
           )}
           {tab === 'reviews' && (
-            <div className="space-y-6 max-w-2xl">
-              {[
-                { name: 'Alex T.', stars: 5, text: 'Absolutely love this product! Great quality and fast delivery.', date: '2026-03-15' },
-                { name: 'Jane R.', stars: 4, text: 'Really nice product, just a bit smaller than I expected from the photos.', date: '2026-02-28' },
-                { name: 'Chris M.', stars: 5, text: 'Perfect gift! Very happy with the purchase.', date: '2026-02-10' },
-              ].map(r => (
-                <div key={r.name} className="bg-slate-50 rounded-2xl p-5">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                        {r.name[0]}
-                      </div>
-                      <div>
-                        <p className="font-bold text-slate-800 text-sm">{r.name}</p>
-                        <div className="flex gap-0.5">{[1,2,3,4,5].map(s=><Star key={s} className={`w-3 h-3 ${s<=r.stars?'fill-amber-400 text-amber-400':'text-slate-200'}`}/>)}</div>
-                      </div>
-                    </div>
-                    <span className="text-xs text-slate-400">{new Date(r.date).toLocaleDateString()}</span>
-                  </div>
-                  <p className="text-sm text-slate-600">"{r.text}"</p>
-                </div>
-              ))}
+            <div className="max-w-2xl rounded-2xl bg-slate-50 p-5 text-sm text-slate-500">
+              No reviews yet. Customer reviews will appear here when available.
             </div>
           )}
         </div>

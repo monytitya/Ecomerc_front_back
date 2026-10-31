@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ArrowRight, ShoppingBag, Star, Truck, ShieldCheck, RefreshCw, Headphones, ChevronRight, Heart, Sparkles, Clock, Zap, Headphones as HeadphonesIcon, Watch, Wallet, Gamepad2, Glasses, Luggage, Grid, Plus, Check, ChevronLeft } from 'lucide-react';
-import { productApi, catalogApi, wishlistApi } from '../../services/api';
+import { productApi, catalogApi, wishlistApi, fileUrl } from '../../services/api';
 import { useCart } from '../../context/CartContext';
 
-const BASE = 'http://localhost:9090/api/files/';
-const img  = (f) => (f ? `${BASE}${f}` : null);
+const img = fileUrl;
 
 // Category icons map
 const categoryIcons = {

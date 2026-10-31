@@ -1,37 +1,34 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 
-/* ─── Admin / Dashboard ─── */
-import AdminLayout    from './components/AdminLayout';
-import Login          from './pages/Login';
-import Register       from './pages/Register';
-import OAuth2Callback from './pages/OAuth2Callback';
-import Dashboard      from './pages/Dashboard';
-import Customers      from './pages/Customers';
-import Orders         from './pages/Orders';
-import Products       from './pages/Products';
-import Coupons        from './pages/Coupons';
-import Invoices       from './pages/Invoices';
-import Analytics      from './pages/Analytics';
-import CMS            from './pages/CMS';
-import Settings       from './pages/Settings';
-import Catalog        from './pages/Catalog';
-import Payments       from './pages/Payments';
-import Checkout       from './pages/Checkout';
-
-/* ─── Public Website ─── */
-import WebsiteLayout  from './components/website/WebsiteLayout';
-import Home           from './pages/website/Home';
-import Shop           from './pages/website/Shop';
-import ProductDetail  from './pages/website/ProductDetail';
-import Cart           from './pages/website/Cart';
-import Wishlist       from './pages/website/Wishlist';
-import About          from './pages/website/About';
-import Contact        from './pages/website/Contact';
-import OrderSuccess   from './pages/website/OrderSuccess';
-import MyOrders       from './pages/website/MyOrders';
-import OrderDetail    from './pages/website/OrderDetail';
+const AdminLayout = lazy(() => import('./components/AdminLayout'));
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const OAuth2Callback = lazy(() => import('./pages/OAuth2Callback'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Customers = lazy(() => import('./pages/Customers'));
+const Orders = lazy(() => import('./pages/Orders'));
+const Products = lazy(() => import('./pages/Products'));
+const Coupons = lazy(() => import('./pages/Coupons'));
+const Invoices = lazy(() => import('./pages/Invoices'));
+const Analytics = lazy(() => import('./pages/Analytics'));
+const CMS = lazy(() => import('./pages/CMS'));
+const Settings = lazy(() => import('./pages/Settings'));
+const Catalog = lazy(() => import('./pages/Catalog'));
+const Payments = lazy(() => import('./pages/Payments'));
+const Checkout = lazy(() => import('./pages/Checkout'));
+const WebsiteLayout = lazy(() => import('./components/website/WebsiteLayout'));
+const Home = lazy(() => import('./pages/website/Home'));
+const Shop = lazy(() => import('./pages/website/Shop'));
+const ProductDetail = lazy(() => import('./pages/website/ProductDetail'));
+const Cart = lazy(() => import('./pages/website/Cart'));
+const Wishlist = lazy(() => import('./pages/website/Wishlist'));
+const About = lazy(() => import('./pages/website/About'));
+const Contact = lazy(() => import('./pages/website/Contact'));
+const OrderSuccess = lazy(() => import('./pages/website/OrderSuccess'));
+const MyOrders = lazy(() => import('./pages/website/MyOrders'));
+const OrderDetail = lazy(() => import('./pages/website/OrderDetail'));
 
 /* Smart root redirect */
 const RootRedirect = () => {
@@ -49,7 +46,8 @@ function App() {
   return (
     <Router>
       <CartProvider>
-        <Routes>
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center" role="status">Loading...</div>}>
+          <Routes>
           {/* Root redirect */}
           <Route path="/" element={<RootRedirect />} />
 
@@ -90,7 +88,8 @@ function App() {
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/home" replace />} />
-        </Routes>
+          </Routes>
+        </Suspense>
       </CartProvider>
     </Router>
   );

@@ -33,6 +33,9 @@ public class SecurityConfig {
     @Value("${app.frontend-url}")
     private String frontendUrl;
 
+    @Value("${app.frontend-origin-patterns:}")
+    private String frontendOriginPatterns;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -95,6 +98,10 @@ public class SecurityConfig {
         config.setAllowedOrigins(Arrays.stream(frontendUrl.split(","))
                 .map(String::trim)
                 .filter(origin -> !origin.isEmpty())
+                .toList());
+        config.setAllowedOriginPatterns(Arrays.stream(frontendOriginPatterns.split(","))
+                .map(String::trim)
+                .filter(pattern -> !pattern.isEmpty())
                 .toList());
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("*"));

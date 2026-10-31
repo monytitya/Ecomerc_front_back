@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Package, Truck, Home, CheckCircle2, Clock, XCircle, RotateCcw, ArrowLeft, ShoppingBag, Loader2 } from 'lucide-react';
-import { orderApi } from '../../services/api';
+import { orderApi, fileUrl } from '../../services/api';
 
-const BASE = 'http://localhost:9090/api/files/';
-const img = (f) => (f ? `${BASE}${f}` : null);
+const img = fileUrl;
 
 const STEPS = [
   { key: 'PENDING',    icon: Clock,         label: 'Order Placed',  sub: 'Your order is received' },

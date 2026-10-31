@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ShoppingBag, Minus, Plus, X, Tag, ArrowRight, Loader2, ShoppingCart, AlertCircle, User, Phone, MapPin } from 'lucide-react';
-import { couponApi, orderApi } from '../../services/api';
+import { couponApi, orderApi, fileUrl } from '../../services/api';
 import { useCart } from '../../context/CartContext';
 import { PAYMENT_CONSTANTS, validateOrderAmount } from '../../config/constants';
 
-const BASE = 'http://localhost:9090/api/files/';
-const img  = (f) => (f ? `${BASE}${f}` : null);
+const img = fileUrl;
 const getInitialContact = () => {
   try {
     const user = JSON.parse(localStorage.getItem('user') || 'null');

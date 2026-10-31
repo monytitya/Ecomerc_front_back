@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Heart, ShoppingBag, Trash2, Loader2, ShoppingCart, ArrowRight } from 'lucide-react';
-import { wishlistApi, cartApi } from '../../services/api';
+import { wishlistApi, cartApi, fileUrl } from '../../services/api';
 
-const BASE = 'http://localhost:9090/api/files/';
-const img  = (f) => (f ? `${BASE}${f}` : null);
+const img = fileUrl;
 
 const Wishlist = () => {
   const [items, setItems]     = useState([]);

@@ -180,7 +180,18 @@ export const contactApi = {
   send: (data) => api.post('/contact/send', data),
 };
 
-export const fileUrl = (filename) => `${import.meta.env.VITE_API_URL || '/api'}/files/${filename}`;
+export const fileUrl = (filename) => {
+  if (!filename) return null;
+
+  const value = String(filename).trim();
+  if (/^(https?:|data:|blob:)/i.test(value)) return value;
+
+  const path = value
+    .replace(/\\/g, '/')
+    .replace(/^\/+/, '')
+    .replace(/^(?:api\/)?files\//i, '');
+  const encodedPath = path.split('/').map(encodeURIComponent).join('/');
+  return `${API_BASE_URL.replace(/\/+$/, '')}/files/${encodedPath}`;
+};
 
 export default api;
-

@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Heart, User, Menu, X, Search, LogOut, LayoutDashboard, Trash2, ArrowRight, Loader2, ShoppingBag, ChevronDown, Flame, Truck, Plus, Minus } from 'lucide-react';
-import { wishlistApi, catalogApi } from '../../services/api';
+import { wishlistApi, catalogApi, fileUrl } from '../../services/api';
 import { useCart } from '../../context/CartContext';
 
-const BASE = 'http://localhost:9090/api/files/';
-const img = (f) => (f ? `${BASE}${f}` : null);
+const img = fileUrl;
 
 const CartItem = ({ item, onDelete, onQtyChange }) => {
   const [qty, setQty] = useState(item.qty || 1);

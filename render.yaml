@@ -16,6 +16,8 @@ services:
         sync: false
       - key: FRONTEND_URL
         sync: false
+      - key: FRONTEND_ORIGIN_PATTERNS
+        value: "https://ecomerc-front-back-*-maotityamony23-7469s-projects.vercel.app"
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_EXPIRATION
